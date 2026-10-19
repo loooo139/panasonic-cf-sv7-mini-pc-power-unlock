@@ -1,0 +1,7 @@
+[Unit]
+Description=Lift the Panasonic CF-SV7 EC/DPTF 10 W package power limit
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/dptf-ec-unlock.sh unlock

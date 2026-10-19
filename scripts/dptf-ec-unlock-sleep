@@ -1,0 +1,6 @@
+#!/bin/sh
+# Re-apply the EC power-limit unlock after S3 resume.
+# systemd-sleep calls this with: $1 = pre|post, $2 = suspend|hibernate|...
+case "$1" in
+  post) /usr/local/sbin/dptf-ec-unlock.sh unlock ;;
+esac

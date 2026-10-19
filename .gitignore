@@ -1,0 +1,26 @@
+# Firmware / machine-specific backups (do not publish)
+*.bin
+*.rom
+*.fd
+*.cap
+*.exe
+*.zip
+
+# Logs and temporary output
+*.log
+*.tmp
+*.bak
+
+# Secrets
+*.token
+*.key
+*.pem
+secrets*
+.env
+.gh_token
+
+# Editor/OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
