@@ -1,10 +1,10 @@
-# Panasonic CF-SV7 Power Limit Unlock: 10 W → 20 W
+# Panasonic CF-SV7 Mini PC Power Unlock: 10 W → 20 W
 
-> A field note / reproducible guide for unlocking the firmware-enforced ~10 W package power limit on a Panasonic CF-SV7 (Intel i5-8350U) running Ubuntu 24.04 as a 24/7 SSH server.
+> A field note / reproducible guide for unlocking the firmware-enforced ~10 W package power limit on a Panasonic CF-SV7 mini PC (Intel i5-8350U) running Ubuntu 24.04 as a 24/7 SSH server.
 
 [中文完整文档](README.md) · [Diagnosis](docs/01-diagnosis.md) · [Recovery](docs/05-recovery.md) · [FAQ](docs/06-faq.md) · [One-click](docs/08-one-click.md)
 
-> Repository: <https://github.com/loooo139/cf-sv7-power-unlock>
+> Repository: <https://github.com/loooo139/panasonic-cf-sv7-mini-pc-power-unlock>
 
 ## TL;DR
 
@@ -27,8 +27,8 @@ Doing only step 1 leaves the EC 10 W cap in place. Doing only step 2 may leave t
 ## One-click (beginner-friendly)
 
 ```bash
-git clone https://github.com/loooo139/cf-sv7-power-unlock.git
-cd cf-sv7-power-unlock
+git clone https://github.com/loooo139/panasonic-cf-sv7-mini-pc-power-unlock.git
+cd panasonic-cf-sv7-mini-pc-power-unlock
 sudo ./one-click.sh
 ```
 

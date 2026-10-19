@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-19 (repo rename)
+
+- Renamed the repository to `panasonic-cf-sv7-mini-pc-power-unlock` and updated the README titles to "松下 CF-SV7 小主机".
+
 ## 2026-10-19
 
 - Initial public release.

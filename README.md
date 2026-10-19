@@ -1,12 +1,12 @@
-# Panasonic CF-SV7 功耗解锁：10 W → 20 W
+# 松下 CF-SV7 小主机功耗解锁：10 W → 20 W
 
-> 在 Ubuntu 24.04 上，把 Panasonic CF-SV7（i5-8350U）被 BIOS/EC 锁死的 **~10 W 持续功耗** 解锁到 **20 W 持续 / 44 W 短时爆发**。  
+> 在 Ubuntu 24.04 上，把松下 CF-SV7 小主机（Let's Note 改迷你主机，i5-8350U）被 BIOS/EC 锁死的 **~10 W 持续功耗** 解锁到 **20 W 持续 / 44 W 短时爆发**。  
 > 8 线程负载：**~2.0 GHz → ~2.79 GHz**；短时爆发可到 **3.4–3.5 GHz**。  
 > 代价：持续温度约 **87 °C**（TjMax 100 °C）；**25 W 不可持续**，会触发 100 °C 热节流并回落到 20 W。
 
 [English summary](README.en.md) · [诊断细节](docs/01-diagnosis.md) · [恢复指南](docs/05-recovery.md) · [FAQ](docs/06-faq.md) · [一键脚本](docs/08-one-click.md)
 
-> 仓库：<https://github.com/loooo139/cf-sv7-power-unlock>
+> 仓库：<https://github.com/loooo139/panasonic-cf-sv7-mini-pc-power-unlock>
 
 ---
 
@@ -35,8 +35,8 @@
 ## 一键使用（推荐小白）
 
 ```bash
-git clone https://github.com/loooo139/cf-sv7-power-unlock.git
-cd cf-sv7-power-unlock
+git clone https://github.com/loooo139/panasonic-cf-sv7-mini-pc-power-unlock.git
+cd panasonic-cf-sv7-mini-pc-power-unlock
 sudo ./one-click.sh
 ```
 
@@ -449,7 +449,7 @@ A: 同 BIOS/同 EC 的批次大概率可以，但必须自行验证：`MSR 0x610
 ## 10. 仓库结构
 
 ```
-cf-sv7-power-unlock/
+panasonic-cf-sv7-mini-pc-power-unlock/
 ├── one-click.sh                  # 小白一键入口
 ├── README.md                     # 本文
 ├── README.en.md                  # 英文摘要

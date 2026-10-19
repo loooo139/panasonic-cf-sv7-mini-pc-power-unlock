@@ -5,8 +5,8 @@
 ## 1. 最快用法
 
 ```bash
-git clone https://github.com/loooo139/cf-sv7-power-unlock.git
-cd cf-sv7-power-unlock
+git clone https://github.com/loooo139/panasonic-cf-sv7-mini-pc-power-unlock.git
+cd panasonic-cf-sv7-mini-pc-power-unlock
 
 # 一键：安装依赖、EC 解锁、检查 BIOS、必要时准备 UEFI Shell
 sudo ./one-click.sh
