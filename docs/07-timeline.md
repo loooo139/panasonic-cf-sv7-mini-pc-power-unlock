@@ -26,10 +26,15 @@
 | 21:00 | 测试 PL1=25 W | 100 °C 热节流，固件把 PL1 降到 10–12 W，再恢复 20 W |
 | 21:01 | 60 秒负载 + MSR 轮询 | 确认动态热保护；稳态 20 W / 2.79 GHz / 87 °C |
 | 21:03 | 测试 PL2=35 W | 仍 100 °C 尖峰；无明显收益 |
-| 21:04 | 定时器改为 5 分钟；加 S3 恢复钩子 | 减少不必要的 EC 写入 |
+| 21:04 | 定时器改为 60 秒；加 S3 恢复钩子 | 减少不必要的 EC 写入 |
 | 21:06 | 重启验证 | 服务开机 6 秒自动执行；MSR 解锁；功耗 20 W 档 |
 | 21:08 | 创建本地 Git 仓库、整理文档/脚本/UEFI | 隐私扫描通过 |
 | 21:xx | `stress-ng matrixprod` A/B（10 W vs 20 W，8 线程 15 秒） | 2911.5 → 4073.6 bogo ops/s（+39.9%） |
+| 22:22 | 负载复测发现只有 10 W | `MSR` 已解锁，但 `dptf-ec-unlock.timer` 的 `NEXT -` |
+| 22:26 | 查 systemd jobs | `multi-user.target` inactive；`plymouth-quit-wait` 卡了 10 分钟 |
+| 22:28 | 手动 `systemctl start plymouth-quit.service` | Plymouth 退出；`multi-user/graphical` 变 active；解锁服务恢复（22:28:18） |
+| 22:31 | 永久修复：service 改 `After=systemd-modules-load.service`；timer 改 `OnActiveSec=10s` + 60 秒；mask `plymouth-quit-wait`；ACPI 调用加 2 s 超时 | 待重启验证 |
+| 22:3x | SSD SMART | PASSED；重分配 0 / CRC 0 / 磨损 0 |
 
 ## 关键结论
 
@@ -38,4 +43,4 @@
 - **`SEPL(0)`** 解除 EC 的 10 W；CPU RAPL 接管。
 - **20 W 是散热上限**；25 W 会 100 °C 热节流，不推荐。
 - **PL2=44 W** 保留，短时爆发有益；持续由 PL1=20 W 限制。
-- **持久化**：开机一次 + 5 分钟安全定时器 + S3 恢复钩子。
+- **持久化**：开机一次 + 60 秒重试 + S3 恢复钩子。

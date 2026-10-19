@@ -2,8 +2,10 @@
 Description=Periodically re-apply the Panasonic CF-SV7 EC power-limit unlock
 
 [Timer]
-OnBootSec=10s
-OnUnitActiveSec=5min
+# OnActiveSec is relative to timer activation (robust if boot is slow).
+# 60 s re-apply: the EC/DPTF may re-apply the 10 W cap shortly after boot.
+OnActiveSec=10s
+OnUnitActiveSec=60s
 AccuracySec=1s
 Unit=dptf-ec-unlock.service
 

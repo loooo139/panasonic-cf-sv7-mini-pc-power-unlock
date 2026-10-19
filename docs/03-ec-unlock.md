@@ -112,14 +112,16 @@ EC 的限制会在以下时机被 BIOS/DPTF 重新施加：
 - S3 恢复（`\_SB.IETM.WAK` 调用 `REPL`）；
 - AC/电池事件（DPTF `_DSM` 里会调用 `SEPL(0/1)`）。
 
+> **重要：** 服务**不能**写 `After=multi-user.target`。本机曾因 `plymouth-quit-wait` 卡死，`multi-user.target` 永远不激活，解锁服务因此一直排队、EC 重新压回 10 W。服务只依赖 `systemd-modules-load.service`，这样即使图形/桌面启动卡住，功耗解锁仍然执行。
+
 所以仓库安装：
 
 | 文件 | 作用 |
 |---|---|
 | `/etc/modules-load.d/acpi_call.conf` | 开机加载 `acpi_call` |
-| `/usr/local/sbin/dptf-ec-unlock.sh` | 执行 `SEPL 0` / `SEPL 1` |
-| `/etc/systemd/system/dptf-ec-unlock.service` | oneshot 服务 |
-| `/etc/systemd/system/dptf-ec-unlock.timer` | 开机 10 s 后 + 每 5 分钟 |
+| `/usr/local/sbin/dptf-ec-unlock.sh` | 执行 `SEPL 0` / `SEPL 1`（ACPI 写入/回读带 2 s 超时） |
+| `/etc/systemd/system/dptf-ec-unlock.service` | oneshot 服务；`After=systemd-modules-load.service`，**不依赖** `multi-user.target` |
+| `/etc/systemd/system/dptf-ec-unlock.timer` | 定时器激活 10 s 后 + 每 60 秒重试（`OnActiveSec`） |
 | `/usr/lib/systemd/system-sleep/dptf-ec-unlock` | S3 恢复后立即执行 |
 
 安装：
@@ -135,12 +137,12 @@ systemctl list-timers --all | grep dptf
 journalctl -u dptf-ec-unlock.service -n 20 --no-pager
 ```
 
-### 5.1 为什么是 5 分钟，不是 15 秒
+### 5.1 为什么是 60 秒，不是 15 秒
 
-- 第一次 `SEPL(0)` 就生效；EC 不会每分钟自己恢复。
-- 反复调用不会更稳，只会多写 EC 邮箱。
-- 5 分钟定时器是安全网；S3 恢复钩子负责即时恢复。
-- 如果你经常插拔 AC，可以把定时器改短，或加 udev 规则（本仓库未包含，保持简单）。
+- 第一次 `SEPL(0)` 就生效；EC 只会在**开机、S3 恢复、AC/电池事件**时重新施加限制。
+- 60 秒是安全网：即使 EC/DPTF 在启动后重新压回 10 W，也能在一分钟内纠正。
+- 不需要 15 秒级的高频调用；那只会多写 EC 邮箱。
+- 如果你经常插拔 AC，可以把定时器再改短，或加 udev 规则（本仓库未包含，保持简单）。
 
 ## 6. 恢复
 
@@ -166,7 +168,8 @@ echo '\_SB.PCI0.LPCB.EC0.SEPL 1' | sudo tee /proc/acpi/call
 | 返回 `0xffff0000` | 正常，继续用 `turbostat` 看功耗 |
 | 功耗仍 10 W | 确认 BIOS `0x551=0` 已生效；`rdmsr 0x610` 应为 `43816000dd80a0` |
 | 功耗 20 W 但很快掉到 10–12 W | 温度到 100 °C，触发了固件动态热保护；不是 EC 的 10 W 上限 |
-| 重启后失效 | 检查 `dptf-ec-unlock.timer` 是否 enabled；`journalctl` |
+| 重启后失效 | 检查 `dptf-ec-unlock.timer` 是否 enabled；`journalctl`；确认 service 里**没有** `After=multi-user.target` |
+| 服务不执行 / `NEXT -` | 检查 `systemctl is-active multi-user.target`；若卡在 `plymouth-quit-wait`，执行 `systemctl start plymouth-quit.service`，并 `systemctl mask plymouth-quit-wait.service` 防止下次再卡 |
 | S3 恢复后失效 | 检查 `/usr/lib/systemd/system-sleep/dptf-ec-unlock` 是否可执行 |
 
 ## 8. 不推荐的替代方案

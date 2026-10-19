@@ -31,9 +31,15 @@ if [ ! -e /proc/acpi/call ]; then
 fi
 
 # _SB.PCI0.LPCB.EC0.SEPL(0|1)
-printf '\\_SB.PCI0.LPCB.EC0.%s\n' "$ACPI_ARGS" > /proc/acpi/call
+#
+# Wrap the write in a timeout: if the EC mailbox is busy, the kernel call can
+# block and keep the oneshot systemd unit in "activating" state, which also
+# prevents OnUnitActiveSec from scheduling the next timer run.
+CMD="$(printf '\\_SB.PCI0.LPCB.EC0.%s' "$ACPI_ARGS")"
+timeout 2 sh -c 'printf "%s\n" "$1" > /proc/acpi/call' _ "$CMD" || true
 
-# Read back the EC mailbox result. Strip NUL bytes; ignore the value.
-RESULT="$(tr -d '\000' < /proc/acpi/call 2>/dev/null || true)"
+# Read back the EC mailbox result with a timeout as well. Strip NUL bytes;
+# ignore the value (0xffff0000 is normal on this machine).
+RESULT="$(timeout 2 cat /proc/acpi/call 2>/dev/null | tr -d '\000' || true)"
 logger -t dptf-ec-unlock "$ACTION -> ${RESULT:-<no result>}"
 echo "$ACTION: ${RESULT:-<no result>}"

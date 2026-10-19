@@ -282,7 +282,7 @@ sudo ./scripts/verify_power.sh
 
 **原理：** DPTF SSDT 的 `\_SB.PCI0.LPCB.EC0.REPL` 会把 `IETM.P589`（PL1）和 `IETM.P592`（PL2）通过 `EC88(0xB5, 0xCA/0xCB, ...)` 写进 EC。`SEPL(0)` 把 `EPLE` 设为 0，`REPL` 随即把 **0xFF** 写入 EC 的 PL1/PL2；`SEPL(1)` 恢复 `P589/P592`。详见 [`docs/03-ec-unlock.md`](docs/03-ec-unlock.md)。
 
-> **不要**每 15 秒反复调用 `SEPL(0)`。第一次调用就生效；EC 只会在开机、S3 恢复、AC/电池事件时重新施加限制。仓库使用 **开机一次 + 5 分钟安全定时器 + S3 恢复钩子**。
+> **不要**每 15 秒反复调用 `SEPL(0)`。第一次调用就生效；EC 只会在开机、S3 恢复、AC/电池事件时重新施加限制。仓库使用 **开机一次 + 60 秒重试 + S3 恢复钩子**。
 
 ### 6.4 持久化（推荐）
 
@@ -296,7 +296,7 @@ sudo ./scripts/install.sh
 
 - 安装 `acpi_call` 模块加载配置；
 - 安装 `/usr/local/sbin/dptf-ec-unlock.sh`（支持 `unlock` / `restore`）；
-- 安装 `dptf-ec-unlock.service` 和 `dptf-ec-unlock.timer`（开机 10 秒后执行，之后每 5 分钟一次）；
+- 安装 `dptf-ec-unlock.service` 和 `dptf-ec-unlock.timer`（定时器激活 10 秒后执行，之后每 60 秒一次）；
 - 安装 S3 恢复钩子 `/usr/lib/systemd/system-sleep/dptf-ec-unlock`；
 - 立即执行一次 `SEPL 0`。
 
@@ -429,7 +429,7 @@ A: 这台机器的散热只能稳定耗散约 20 W。25 W 会让封装瞬间到 
 A: EC 邮箱命令的回读错误码，不代表写入失败。用 `turbostat` 看实际功耗：从 10 W 变 20 W 就说明生效了。仓库脚本会忽略该返回值并记录日志。
 
 **Q: 需要每 15 秒调用一次吗？**  
-A: 不需要。EC 只在开机、S3 恢复、AC/电池事件时重新施加限制。仓库使用 **开机一次 + 5 分钟安全定时器 + S3 恢复钩子**。反复调用不会更稳，只会多写 EC。
+A: 不需要。EC 只在开机、S3 恢复、AC/电池事件时重新施加限制。仓库使用 **开机一次 + 60 秒重试 + S3 恢复钩子**。反复调用不会更稳，只会多写 EC。
 
 **Q: 没有电池会有影响吗？**  
 A: 本机没有电池，EC 可能更保守。解锁在 AC 下有效。建议使用 **90 W** 足量适配器，并保持通风。

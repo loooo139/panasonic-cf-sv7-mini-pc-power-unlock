@@ -1,6 +1,8 @@
 [Unit]
 Description=Lift the Panasonic CF-SV7 EC/DPTF 10 W package power limit
-After=multi-user.target
+# Do not order after multi-user.target: a stuck plymouth/graphical boot would
+# prevent the EC unlock from ever running. The script only needs acpi_call.
+After=systemd-modules-load.service
 
 [Service]
 Type=oneshot

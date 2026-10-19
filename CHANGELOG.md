@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-19 (boot reliability)
+
+- Fixed the unlock service being blocked by `After=multi-user.target` when `plymouth-quit-wait.service` hangs (observed on the test machine: `multi-user.target` stayed inactive for 10 min, so the EC limit was re-applied and the service never ran).
+- Service now uses `After=systemd-modules-load.service`; timer uses `OnActiveSec=10s` + `OnUnitActiveSec=60s`.
+- Added 2 s timeouts around the `acpi_call` write/read so a busy EC cannot wedge the oneshot unit.
+- Masked `plymouth-quit-wait.service` on the test machine; improved postboot verification (90 s delay + 10 s warmup).
+- SSD SMART check: PASSED, 0 reallocated sectors, 0 CRC errors; the boot-time ATA log-page timeouts are benign.
+
 ## 2026-10-19 (cooling)
 
 - Added `docs/09-cooling.md` with hardware cooling options: cleaning, PTM7950 repaste, thermal putty, airflow/ducting, external 120 mm fan, and a 25 W feasibility test plan.
