@@ -4,7 +4,7 @@
 > 8 线程负载：**~2.0 GHz → ~2.79 GHz**；短时爆发可到 **3.4–3.5 GHz**。  
 > 代价：持续温度约 **87 °C**（TjMax 100 °C）；**25 W 不可持续**，会触发 100 °C 热节流并回落到 20 W。
 
-[English summary](README.en.md) · [诊断细节](docs/01-diagnosis.md) · [恢复指南](docs/05-recovery.md) · [FAQ](docs/06-faq.md) · [一键脚本](docs/08-one-click.md)
+[English summary](README.en.md) · [诊断细节](docs/01-diagnosis.md) · [恢复指南](docs/05-recovery.md) · [FAQ](docs/06-faq.md) · [一键脚本](docs/08-one-click.md) · [散热改进](docs/09-cooling.md)
 
 > 仓库：<https://github.com/loooo139/panasonic-cf-sv7-mini-pc-power-unlock>
 
@@ -419,7 +419,8 @@ sudo ./scripts/uninstall.sh
 
 ## 9. 注意事项 / FAQ
 
-更完整的 FAQ 见 [`docs/06-faq.md`](docs/06-faq.md)。
+更完整的 FAQ 见 [`docs/06-faq.md`](docs/06-faq.md)。  
+硬件散热改进（清灰、PTM7950、加风扇、风道、25 W 可行性）见 [`docs/09-cooling.md`](docs/09-cooling.md)。
 
 **Q: 为什么 25 W 不稳定？**  
 A: 这台机器的散热只能稳定耗散约 20 W。25 W 会让封装瞬间到 100 °C，固件动态把 PL1 降到 10–12 W，等温度回落再恢复 20 W。平均性能并不比 20 W 高。
@@ -482,7 +483,8 @@ panasonic-cf-sv7-mini-pc-power-unlock/
 │   ├── 05-recovery.md            # 恢复/回滚
 │   ├── 06-faq.md                 # 常见问题
 │   ├── 07-timeline.md            # 本次调试时间线
-│   └── 08-one-click.md           # 一键脚本使用说明
+│   ├── 08-one-click.md           # 一键脚本使用说明
+│   └── 09-cooling.md             # 硬件散热改进
 ├── scripts/
 │   ├── setup-uefi.sh             # 准备 UEFI Shell / BootNext
 │   ├── install.sh                # 安装持久化

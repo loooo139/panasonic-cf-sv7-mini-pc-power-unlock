@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-19 (cooling)
+
+- Added `docs/09-cooling.md` with hardware cooling options: cleaning, PTM7950 repaste, thermal putty, airflow/ducting, external 120 mm fan, and a 25 W feasibility test plan.
+
 ## 2026-10-19 (benchmark)
 
 - Added stress-ng `matrixprod` A/B results: 2911.5 → 4073.6 bogo ops/s (+39.9%) for 8 threads, 10 W vs 20 W.

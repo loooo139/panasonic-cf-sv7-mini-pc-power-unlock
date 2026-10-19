@@ -2,7 +2,7 @@
 
 > A field note / reproducible guide for unlocking the firmware-enforced ~10 W package power limit on a Panasonic CF-SV7 mini PC (Intel i5-8350U) running Ubuntu 24.04 as a 24/7 SSH server.
 
-[中文完整文档](README.md) · [Diagnosis](docs/01-diagnosis.md) · [Recovery](docs/05-recovery.md) · [FAQ](docs/06-faq.md) · [One-click](docs/08-one-click.md)
+[中文完整文档](README.md) · [Diagnosis](docs/01-diagnosis.md) · [Recovery](docs/05-recovery.md) · [FAQ](docs/06-faq.md) · [One-click](docs/08-one-click.md) · [Cooling](docs/09-cooling.md)
 
 > Repository: <https://github.com/loooo139/panasonic-cf-sv7-mini-pc-power-unlock>
 
