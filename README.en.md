@@ -12,6 +12,7 @@
 |---|---|---|
 | 8-thread sustained package power | ~10 W | **~20 W** |
 | 8-thread frequency | ~2.0 GHz | **~2.79 GHz** |
+| 8-thread performance (stress-ng) | 2911.5 bogo ops/s | **4073.6 bogo ops/s (+40%)** |
 | Short burst | ~10 W | **~36–39 W / 3.4–3.5 GHz** (PL2, seconds) |
 | Sustained temperature | 54–60 °C | **~87 °C** |
 | `MSR 0x610` | PL1 25 W / PL2 44 W, **PL2 LOCK=1** | PL1 20 W / PL2 44 W, **LOCK=0** |
@@ -37,6 +38,15 @@ It installs dependencies, installs the EC unlock service, checks the MSR, and pr
 ## Why 20 W and not 25 W?
 
 The CF-SV7 cooling system can dissipate about **20 W** sustainably. At 25 W the package hits **100 °C (TjMax)** within seconds; the firmware dynamically drops PL1 to 10–12 W until the temperature falls, then restores 20 W. The average performance is not better than a stable 20 W. Reducing PL2 from 44 W to 35 W does not avoid the 100 °C spike; the thermal mass is simply too small. **Keep the BIOS default PL1=20 W / PL2=44 W.**
+
+## Measured performance (stress-ng matrixprod, 8 threads, 15 s)
+
+| State | bogo ops/s | Relative |
+|---|---:|---:|
+| 10 W (EC limit) | 2911.5 | 1.00x |
+| 20 W (unlocked) | 4073.6 | **1.40x** |
+
+The multi-core gain matches the frequency ratio (2.79/2.0 ≈ 1.40). Single-thread is essentially unchanged (the stock CPU already boosts to ~3.5 GHz); the unlock mainly improves sustained all-core performance. Performance per watt drops (2x power for 1.4x performance) — 20 W is the max-performance mode, not the efficiency mode.
 
 ## Quick start
 

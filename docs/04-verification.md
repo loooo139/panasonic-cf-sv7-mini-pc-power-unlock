@@ -173,3 +173,40 @@ done
 ```
 
 或者用 `sensors` / Prometheus node_exporter 监控。保持环境温度 < 30 °C，定期清理风扇和出风口。
+
+## 8. A/B 基准：20 W vs 10 W
+
+`stress-ng` 的 `matrixprod` 是稳定的 CPU 密集型基准。测试时**临时停掉** `dptf-ec-unlock.timer`，避免定时器在 10 W 测试中途重新解锁：
+
+```bash
+sudo systemctl stop dptf-ec-unlock.timer
+
+# 20 W
+sudo /usr/local/sbin/dptf-ec-unlock.sh unlock
+for i in $(seq 8); do (timeout 12 sha256sum /dev/zero >/dev/null 2>&1) & done
+sleep 12; wait
+stress-ng --cpu 8 --cpu-method matrixprod --metrics --timeout 15s
+
+# 10 W
+sudo /usr/local/sbin/dptf-ec-unlock.sh restore
+sleep 5
+for i in $(seq 8); do (timeout 12 sha256sum /dev/zero >/dev/null 2>&1) & done
+sleep 12; wait
+stress-ng --cpu 8 --cpu-method matrixprod --metrics --timeout 15s
+
+# 恢复 20 W 和定时器
+sudo /usr/local/sbin/dptf-ec-unlock.sh unlock
+sudo systemctl start dptf-ec-unlock.timer
+```
+
+实测（15.01 秒，8 线程）：
+
+| 状态 | bogo ops | bogo ops/s | CPU 使用率 |
+|---|---:|---:|---:|
+| 10 W（EC 限制） | 43,697 | 2911.50 | 97.52% |
+| **20 W（解锁）** | **61,133** | **4073.61** | 98.26% |
+| 提升 | **+39.9%** | **+39.9%** | — |
+
+- 多核提升与频率比 `2.79 / 2.0 ≈ 1.40` 一致。
+- 单线程没有单独做 A/B；从 `turbostat` 观察，原厂和 20 W 状态都能短时 boost 到 ~3.5 GHz，提升主要在全核持续。
+- 功耗 2x、性能 1.4x，能效比下降；20 W 是最大性能档，不是省电档。

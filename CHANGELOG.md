@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-19 (benchmark)
+
+- Added stress-ng `matrixprod` A/B results: 2911.5 → 4073.6 bogo ops/s (+39.9%) for 8 threads, 10 W vs 20 W.
+
 ## 2026-10-19 (repo rename)
 
 - Renamed the repository to `panasonic-cf-sv7-mini-pc-power-unlock` and updated the README titles to "松下 CF-SV7 小主机".
